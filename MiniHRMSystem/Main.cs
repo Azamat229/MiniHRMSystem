@@ -20,15 +20,18 @@ namespace MiniHRMSystem
     private void LoadEmployees()
     {
       var employees = _context.Employees.Include(e => e.Position).ThenInclude(p => p.Department).ToList();
-      dataGridViewEmployees.DataSource = employees.Select(e => new
+      var employeeData = employees.Select(e => new
       {
-        e.EmployeeId,
+        EmployeeId = e.EmployeeId, 
         FullName = $"{e.FirstName} {e.MiddleName} {e.LastName}",
         Position = e.Position.Title,
         Department = e.Position.Department.Name,
-        e.DateOfBirth,
+        DateOfBirth = e.DateOfBirth.ToShortDateString(),
         e.Gender
       }).ToList();
+
+      dataGridViewEmployees.DataSource = employeeData;
+      dataGridViewEmployees.Columns["EmployeeId"].Visible = false;
     }
 
     private void buttonAddEmployee_Click(object sender, EventArgs e)
@@ -44,13 +47,27 @@ namespace MiniHRMSystem
     {
       if (dataGridViewEmployees.SelectedRows.Count > 0)
       {
-        var employeeId = (int)dataGridViewEmployees.SelectedRows[0].Cells[0].Value;
+        // Получить ID выбранного сотрудника
+        var employeeId = (int)dataGridViewEmployees.SelectedRows[0].Cells["EmployeeId"].Value;
         var employee = _context.Employees.Find(employeeId);
         if (employee != null)
         {
-          employee.IsDeleted = true;
-          _context.SaveChanges();
-          LoadEmployees();
+          // Показать диалоговое окно подтверждения
+          var result = MessageBox.Show(
+              $"Are you sure you want to delete employee {employee.FirstName} {employee.LastName}?",
+              "Confirm Deletion",
+              MessageBoxButtons.YesNo,
+              MessageBoxIcon.Warning
+          );
+
+          // Если пользователь нажал Yes, выполнить мягкое удаление
+          if (result == DialogResult.Yes)
+          {
+            // Мягкое удаление
+            employee.IsDeleted = true;
+            _context.SaveChanges();
+            LoadEmployees();
+          }
         }
       }
     }
@@ -66,11 +83,10 @@ namespace MiniHRMSystem
 
       dataGridViewEmployees.DataSource = employees.Select(e => new
       {
-        e.EmployeeId,
         FullName = $"{e.FirstName} {e.MiddleName} {e.LastName}",
         Position = e.Position.Title,
         Department = e.Position.Department.Name,
-        e.DateOfBirth,
+        DateOfBirth = e.DateOfBirth.ToShortDateString(),
         e.Gender
       }).ToList();
     }
