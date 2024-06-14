@@ -11,3 +11,6 @@
 
 ![image](https://github.com/Azamat229/MiniHRMSystem/assets/51823189/619dbad8-40b9-4031-8492-851e14e1c70a)
 
+### seach by Firt  last middle names 
+
+![image](https://github.com/Azamat229/MiniHRMSystem/assets/51823189/c5c8892c-b0a2-47bc-977d-13b830187ea3)
