@@ -23,7 +23,7 @@ namespace MiniHRMSystem
       dataGridViewEmployees.DataSource = employees.Select(e => new
       {
         e.EmployeeId,
-        e.FullName,
+        FullName = $"{e.FirstName} {e.MiddleName} {e.LastName}",
         Position = e.Position.Title,
         Department = e.Position.Department.Name,
         e.DateOfBirth,
@@ -59,12 +59,15 @@ namespace MiniHRMSystem
     {
       var searchText = textBoxSearch.Text.ToLower();
       var employees = _context.Employees.Include(e => e.Position)
-          .Where(e => e.FullName.ToLower().Contains(searchText))
+          .Where(e => e.FirstName.ToLower().Contains(searchText) ||
+                      e.MiddleName.ToLower().Contains(searchText) ||
+                      e.LastName.ToLower().Contains(searchText))
           .ToList();
+
       dataGridViewEmployees.DataSource = employees.Select(e => new
       {
         e.EmployeeId,
-        e.FullName,
+        FullName = $"{e.FirstName} {e.MiddleName} {e.LastName}",
         Position = e.Position.Title,
         Department = e.Position.Department.Name,
         e.DateOfBirth,
